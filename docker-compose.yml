@@ -1,0 +1,72 @@
+services:
+
+  # PHP
+  sigve-api-be:
+    container_name: sigve-api-be
+    build:
+      target: dev
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        userid: $userid
+    environment:
+      XDEBUG_CLIENT_HOST: 172.17.0.1
+      XDEBUG_CLIENT_PORT: 9003
+      PHP_IDE_CONFIG: serverName=Docker
+    networks:
+      - sigve_network
+    volumes:
+      - ./:/appdata/www
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+
+  # NGINX
+  sigve-web:
+    container_name: sigve-web
+    build:
+      target: dev
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - '8008:80'
+    volumes:
+      - ./:/appdata/www
+    links:
+      - sigve-api-be
+    networks:
+      - sigve_network
+    depends_on:
+      - sigve-api-be
+
+  mailer:
+    container_name: sigve-mailer
+    image: schickling/mailcatcher
+    ports:
+      - '1081:1080'
+      - '1026:1025'
+    networks:
+      - sigve_network
+
+  db:
+    container_name: sigve-postgres
+    build:
+      context: .
+      dockerfile: docker/postgresql/Dockerfile
+    ports:
+      - '5439:5432'
+    environment:
+      POSTGRES_USER: sigve
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: sigve
+      TZ: 'America/La_Paz'
+      PGTZ: 'America/La_Paz'
+    volumes:
+      - sigve-pgsql-data:/var/lib/postgresql/data
+    networks:
+      - sigve_network
+
+networks:
+  sigve_network:
+
+volumes:
+  sigve-pgsql-data:
+
