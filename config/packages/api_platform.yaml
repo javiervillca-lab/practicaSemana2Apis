@@ -4,4 +4,11 @@ api_platform:
     defaults:
         stateless: true
         cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin']
+            vary: ["Content-Type", "Authorization", "Origin"]
+
+    # Configuración correcta para habilitar el candado JWT en Swagger UI
+    swagger:
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header
