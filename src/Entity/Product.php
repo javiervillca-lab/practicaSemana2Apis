@@ -23,9 +23,7 @@ use Doctrine\ORM\Mapping as ORM;
             new GetCollection(),
             new Post(),
             new Get(),
-            new Patch(
-                security: 'is_granted("PUBLIC_ACCESS")',
-            ),
+            new Patch(),
             new Delete(),
         ],
         normalizationContext: ['groups' => ['product:read']],
