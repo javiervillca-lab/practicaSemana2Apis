@@ -21,10 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
     ApiResource(
         operations: [
             new GetCollection(),
-            new Post(
-                security: 'is_granted("PUBLIC_ACCESS")',
-                validationContext: ['groups' => ['Default', 'postValidation']],
-            ),
+            new Post(),
             new Get(),
             new Patch(
                 security: 'is_granted("PUBLIC_ACCESS")',
@@ -60,7 +57,7 @@ class Product
     private ?string $colour = null;
 
     #[ORM\Column]
-      #[Groups(['product:read', 'product:create', 'product:update'])]     
+    #[Groups(['product:read', 'product:create', 'product:update'])]
     private ?float $price = null;
 
     #[ORM\Column]
