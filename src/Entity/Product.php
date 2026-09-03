@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Entity\Trait\BlameableTimestampableTrait;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -61,6 +63,17 @@ class Product
     #[ORM\Column]
     #[Groups(['product:read', 'product:create', 'product:update'])]
     private ?int $stock = null;
+
+    /**
+     * @var Collection<int, SaleDetail>
+     */
+    #[ORM\OneToMany(targetEntity: SaleDetail::class, mappedBy: 'product')]
+    private Collection $saleDetails;
+
+    public function __construct()
+    {
+        $this->saleDetails = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -123,6 +136,36 @@ class Product
     public function setStock(int $stock): static
     {
         $this->stock = $stock;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SaleDetail>
+     */
+    public function getSaleDetails(): Collection
+    {
+        return $this->saleDetails;
+    }
+
+    public function addSaleDetail(SaleDetail $saleDetail): static
+    {
+        if (!$this->saleDetails->contains($saleDetail)) {
+            $this->saleDetails->add($saleDetail);
+            $saleDetail->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSaleDetail(SaleDetail $saleDetail): static
+    {
+        if ($this->saleDetails->removeElement($saleDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($saleDetail->getProduct() === $this) {
+                $saleDetail->setProduct(null);
+            }
+        }
 
         return $this;
     }

@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\SaleRepository;
 use App\Entity\Trait\BlameableTimestampableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -58,6 +60,17 @@ class Sale
     #[ORM\Column(length: 50)]
     #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private ?string $state = null;
+
+    /**
+     * @var Collection<int, SaleDetail>
+     */
+    #[ORM\OneToMany(targetEntity: SaleDetail::class, mappedBy: 'sale')]
+    private Collection $saleDetails;
+
+    public function __construct()
+    {
+        $this->saleDetails = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +121,36 @@ class Sale
     public function setState(string $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SaleDetail>
+     */
+    public function getSaleDetails(): Collection
+    {
+        return $this->saleDetails;
+    }
+
+    public function addSaleDetail(SaleDetail $saleDetail): static
+    {
+        if (!$this->saleDetails->contains($saleDetail)) {
+            $this->saleDetails->add($saleDetail);
+            $saleDetail->setSale($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSaleDetail(SaleDetail $saleDetail): static
+    {
+        if ($this->saleDetails->removeElement($saleDetail)) {
+            // set the owning side to null (unless already changed)
+            if ($saleDetail->getSale() === $this) {
+                $saleDetail->setSale(null);
+            }
+        }
 
         return $this;
     }
