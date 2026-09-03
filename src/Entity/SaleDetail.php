@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SaleDetailRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SaleDetailRepository::class)]
+#[ApiResource(operations: [])]
 class SaleDetail
 {
     #[ORM\Id]
@@ -14,20 +17,25 @@ class SaleDetail
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private ?float $unitPrice = null;
 
     #[ORM\Column]
+    #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private ?float $lineTotal = null;
 
-    #[ORM\ManyToOne(inversedBy: 'product')]
+    #[ORM\ManyToOne(inversedBy: 'saleDetails')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['sale:create', 'sale:update'])]
     private ?Sale $sale = null;
 
     #[ORM\ManyToOne(inversedBy: 'saleDetails')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private ?Product $product = null;
 
     public function getId(): ?int

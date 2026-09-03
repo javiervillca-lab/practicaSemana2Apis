@@ -31,7 +31,7 @@ use Doctrine\ORM\Mapping as ORM;
         ],
         normalizationContext: ['groups' => ['sale:read']],
         denormalizationContext: ['groups' => ['sale:create', 'sale:update']],
-        order: ['createdAt' => 'DESC', 'name' => 'ASC'],
+        order: ['createdAt' => 'DESC'],
         paginationEnabled: true,
     ),
 ]
@@ -64,7 +64,8 @@ class Sale
     /**
      * @var Collection<int, SaleDetail>
      */
-    #[ORM\OneToMany(targetEntity: SaleDetail::class, mappedBy: 'sale')]
+    #[ORM\OneToMany(targetEntity: SaleDetail::class, mappedBy: 'sale', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['sale:read', 'sale:create', 'sale:update'])]
     private Collection $saleDetails;
 
     public function __construct()
