@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SaleDetailRepository::class)]
-#[ApiResource(operations: [])]
+#[ApiResource()]
 class SaleDetail
 {
     #[ORM\Id]
