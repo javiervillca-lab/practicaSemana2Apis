@@ -158,7 +158,7 @@ openssl genrsa -aes256 -passout pass:CAMBIAR_ESTA_FRASE -out config/jwt/private.
 openssl rsa -pubout -in config/jwt/private.pem -passin pass:CAMBIAR_ESTA_FRASE -out config/jwt/public.pem
 ```
 
-En ese caso, reemplazar `JWT_PASSPHRASE` por `CAMBIAR_ESTA_FRASE` en `.env.local`.
+En ese caso, reemplazar `JWT_PASSPHRASE` por `CAMBIAR_ESTA_FRASE` en `.env`.
 
 ### Migraciones y ejecución
 
@@ -228,6 +228,11 @@ JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=<frase_de_la_clave_privada>
 ```
+Para generar los archivos private.pem y public.pem deben ejecutar este codigo
+
+```bash
+php bin/console lexik:jwt:generate-keypair
+```
 
 Si se generan nuevas claves, actualizar `JWT_PASSPHRASE` con la misma contraseña utilizada durante la generación:
 
@@ -239,7 +244,7 @@ La frase usada en el comando debe configurarse en `JWT_PASSPHRASE`. En producci�
 
 ### CORS
 
-El entorno de desarrollo permite solicitudes desde `localhost` y `127.0.0.1`. Para cambiarlo, definir `CORS_ALLOW_ORIGIN` en `.env.local` con una expresión regular compatible con Nelmio CORS.
+El entorno de desarrollo permite solicitudes desde `localhost` y `127.0.0.1`. Para cambiarlo, definir `CORS_ALLOW_ORIGIN` en `.env` con una expresión regular compatible con Nelmio CORS.
 
 ## Autenticación y uso de la API
 
